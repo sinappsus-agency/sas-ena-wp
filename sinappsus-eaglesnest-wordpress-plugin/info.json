@@ -1,7 +1,7 @@
 {
     "name" : "Sinappsus Eaglesnest WordPress Plugin",
     "slug" : "sinappsus-eaglesnest-wordpress-plugin",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "author"  : "Sinappsus",
     "author_uri" : "https://sinappsus.agency",
     "download_url" : "https://github.com/sinappsus-agency/teljoy-woocommerce/raw/main/teljoy-woocommerce-payment-gateway.zip",

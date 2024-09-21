@@ -4,7 +4,7 @@
  * Description: the official ENA wordpress plugin for integration into the ENA HEADLESS API
  * Plugin URI: https://eaglesnestatitlan.com
  * Author URI: https://eaglesnestatitlan.com
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: Sinappsus
  * Requires at least: 5.0
  * Tested up to: 6.0
@@ -16,7 +16,7 @@
 
 defined('ABSPATH') || exit;
 
-define('ENA_SINAPPSUS_VERSION', '1.0.11');
+define('ENA_SINAPPSUS_VERSION', '0.0.2');
 define('ENA_SINAPPSUS_URL', untrailingslashit(plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__))));
 define('ENA_SINAPPSUS_PATH', untrailingslashit(plugin_dir_path(__FILE__)));
 

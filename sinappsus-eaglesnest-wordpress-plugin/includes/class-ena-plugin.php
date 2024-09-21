@@ -132,3 +132,106 @@ function ena_sinappsus_form_shortcode() {
 	}
 	return ob_get_clean();
 }
+
+
+// Function to read URL parameters and make API call for the sales funnel page
+function handle_sales_funnel_step() {
+    // Get step from URL parameter
+    if (isset($_GET['step'])) {
+        $step = sanitize_text_field($_GET['step']); // Ensure safe parameter handling
+
+        // Prepare API URL based on the step
+        $api_url = "https://your-api-url.com/steps/" . $step;
+
+        // Make the API call
+        $response = wp_remote_get($api_url);
+
+        if (is_wp_error($response)) {
+            return 'API request failed';
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        // Check if the API returns HTML content or a page ID
+        if (isset($data['html'])) {
+            // Return the HTML content
+            return $data['html'];
+        } elseif (isset($data['next_page_id'])) {
+            // Get the next page ID and redirect
+            $next_page = get_permalink($data['next_page_id']);
+            wp_redirect($next_page);
+            exit;
+        }
+    }
+
+    return 'No step parameter found.';
+}
+
+// Shortcode to load the sales funnel step
+add_shortcode('load_funnel_step', 'handle_sales_funnel_step');
+
+
+// Create the admin menu page for linking funnel steps to pages
+function create_funnel_admin_page() {
+    add_menu_page(
+        'Funnel Steps',
+        'Funnel Steps',
+        'manage_options',
+        'funnel-steps',
+        'funnel_steps_page_html'
+    );
+}
+add_action('admin_menu', 'create_funnel_admin_page');
+
+// Admin page HTML to link pages and funnel steps
+function funnel_steps_page_html() {
+    // Fetch all published pages
+    $pages = get_pages();
+    
+    // Fetch the sales funnel steps (You need to replace this with your actual steps)
+    $funnel_steps = array('Step 1', 'Step 2', 'Step 3');
+
+    ?>
+    <div class="wrap">
+        <h1>Link Funnel Steps to Pages</h1>
+        <form method="post" action="options.php">
+            <?php settings_fields('funnel_step_options'); ?>
+            <?php do_settings_sections('funnel_step_options'); ?>
+
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Select Page</th>
+                    <td>
+                        <select name="funnel_step_page">
+                            <?php foreach ($pages as $page) { ?>
+                                <option value="<?php echo $page->ID; ?>"><?php echo $page->post_title; ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                </tr>
+                
+                <tr valign="top">
+                    <th scope="row">Select Funnel Step</th>
+                    <td>
+                        <select name="funnel_step_name">
+                            <?php foreach ($funnel_steps as $step) { ?>
+                                <option value="<?php echo $step; ?>"><?php echo $step; ?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Register settings for saving funnel steps to pages
+function register_funnel_settings() {
+    register_setting('funnel_step_options', 'funnel_step_page');
+    register_setting('funnel_step_options', 'funnel_step_name');
+}
+add_action('admin_init', 'register_funnel_settings');
