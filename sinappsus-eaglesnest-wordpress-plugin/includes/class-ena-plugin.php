@@ -25,6 +25,7 @@ function ena_sinappsus_add_admin_menu() {
 	add_menu_page('ENA SYSTEM', 'ENA SYSTEM', 'manage_options', 'ena-system', 'ena_sinappsus_settings_page', 'dashicons-admin-generic');
 	add_submenu_page('ena-system', 'CRM', 'CRM', 'manage_options', 'ena-crm', 'ena_sinappsus_crm_page');
 	add_submenu_page('ena-system', 'Reservations', 'Reservations', 'manage_options', 'ena-reservations', 'ena_sinappsus_reservations_page');
+	add_submenu_page('ena-system', 'Funnel Steps','Funnel Steps','manage_options','funnel-steps','funnel_steps_page_html');
 }
 
 // Settings page
@@ -71,6 +72,7 @@ function ena_sinappsus_register_settings() {
 	register_setting('ena_sinappsus_settings_group', 'ena_sinappsus_account_key');
 	add_settings_section('ena_sinappsus_settings_section', 'API Settings', null, 'ena_sinappsus_settings');
 	add_settings_field('ena_sinappsus_account_key', 'Account Key', 'ena_sinappsus_account_key_callback', 'ena_sinappsus_settings', 'ena_sinappsus_settings_section');
+	
 }
 
 function ena_sinappsus_account_key_callback() {
@@ -170,19 +172,6 @@ function handle_sales_funnel_step() {
 
 // Shortcode to load the sales funnel step
 add_shortcode('load_funnel_step', 'handle_sales_funnel_step');
-
-
-// Create the admin menu page for linking funnel steps to pages
-function create_funnel_admin_page() {
-    add_menu_page(
-        'Funnel Steps',
-        'Funnel Steps',
-        'manage_options',
-        'funnel-steps',
-        'funnel_steps_page_html'
-    );
-}
-add_action('admin_menu', 'create_funnel_admin_page');
 
 // Admin page HTML to link pages and funnel steps
 function funnel_steps_page_html() {
