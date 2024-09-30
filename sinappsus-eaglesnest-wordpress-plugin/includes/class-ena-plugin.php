@@ -15,6 +15,8 @@ if (!defined('ABSPATH')) {
 define('ENA_SINAPPSUS_VERSION', '1.0');
 define('ENA_SINAPPSUS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ENA_SINAPPSUS_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('ENA_SINAPPSUS_API_URL', 'https://api-ena.sinappsus.us/api');
+
 
 // Include the config file
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'config.php';
@@ -137,41 +139,50 @@ function ena_sinappsus_form_shortcode() {
 
 
 // Function to read URL parameters and make API call for the sales funnel page
-function handle_sales_funnel_step() {
-    // Get step from URL parameter
-    if (isset($_GET['step'])) {
-        $step = sanitize_text_field($_GET['step']); // Ensure safe parameter handling
-
-        // Prepare API URL based on the step
-        $api_url = "https://your-api-url.com/steps/" . $step;
-
-        // Make the API call
-        $response = wp_remote_get($api_url);
-
-        if (is_wp_error($response)) {
-            return 'API request failed';
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        // Check if the API returns HTML content or a page ID
-        if (isset($data['html'])) {
-            // Return the HTML content
-            return $data['html'];
-        } elseif (isset($data['next_page_id'])) {
-            // Get the next page ID and redirect
-            $next_page = get_permalink($data['next_page_id']);
-            wp_redirect($next_page);
-            exit;
-        }
+function handle_sales_funnel_step( $sales_funnel_id = null, $step_id = null ) {
+    // Ensure both parameters are provided
+    if ( empty( $sales_funnel_id ) || empty( $step_id ) ) {
+        return 'Sales Funnel ID and Step ID are required.';
     }
 
-    return 'No step parameter found.';
+    // Prepare API URL based on the sales funnel and step IDs
+    $api_url = ENA_SINAPPSUS_API_URL."/salesfunnels/steps/{$sales_funnel_id}/{$step_id}";
+
+    // Make the API call
+    $response = wp_remote_get( $api_url );
+
+    if ( is_wp_error( $response ) ) {
+        return 'API request failed';
+    }
+
+    $body = wp_remote_retrieve_body( $response );
+    $data = json_decode( $body, true );
+
+    // Check if the API returns HTML content or a page ID
+    if ( isset( $data['html'] ) ) {
+        // Return the HTML content
+        return $data['html'];
+    } elseif ( isset( $data['next_page_id'] ) ) {
+        // Get the next page ID and redirect
+        $next_page = get_permalink( $data['next_page_id'] );
+        wp_redirect( $next_page );
+        exit;
+    }
+
+    return 'No content available for this step.';
 }
 
+
 // Shortcode to load the sales funnel step
-add_shortcode('load_funnel_step', 'handle_sales_funnel_step');
+function handle_sales_funnel_step_shortcode( $atts ) {
+    $atts = shortcode_atts( [
+        'sales_funnel' => '',
+        'step'         => '',
+    ], $atts );
+
+    return handle_sales_funnel_step( $atts['sales_funnel'], $atts['step'] );
+}
+add_shortcode( 'load_funnel_step', 'handle_sales_funnel_step_shortcode' );
 
 // Admin page HTML to link pages and funnel steps
 function funnel_steps_page_html() {
@@ -224,3 +235,60 @@ function register_funnel_settings() {
     register_setting('funnel_step_options', 'funnel_step_name');
 }
 add_action('admin_init', 'register_funnel_settings');
+
+
+
+// ELEMENTOR SECTION
+
+// Enqueue FontAwesome
+function ena_sinappsus_enqueue_fontawesome() {
+    // Check if FontAwesome is already enqueued by another plugin or theme
+    if ( ! wp_style_is( 'ena-sinappsus-fontawesome', 'enqueued' ) ) {
+        wp_enqueue_style( 'ena-sinappsus-fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css' );
+    }
+}
+
+// Enqueue on frontend
+add_action( 'wp_enqueue_scripts', 'ena_sinappsus_enqueue_fontawesome' );
+
+// Enqueue in Elementor editor
+add_action( 'elementor/editor/after_enqueue_styles', 'ena_sinappsus_enqueue_fontawesome' );
+
+
+// Initialize Elementor Widgets
+function ena_sinappsus_register_elementor_widgets() {
+    // Check if Elementor is loaded
+    if ( did_action( 'elementor/loaded' ) ) {
+        // Add custom category
+        add_action( 'elementor/elements/categories_registered', 'ena_sinappsus_add_elementor_widget_categories' );
+
+        // Register Widgets
+        add_action( 'elementor/widgets/register', 'ena_sinappsus_register_widgets' );
+    }
+}
+add_action( 'plugins_loaded', 'ena_sinappsus_register_elementor_widgets' );
+
+function ena_sinappsus_enqueue_scripts() {
+    wp_register_script( 'ena-sinappsus-widget-script', plugin_dir_url( __FILE__ ) . 'elementor-widgets/ena-sinappsus-widget-script.js', [ 'jquery' ], '1.0', true );
+}
+add_action( 'elementor/editor/after_enqueue_scripts', 'ena_sinappsus_enqueue_scripts' );
+
+
+function ena_sinappsus_add_elementor_widget_categories( $elements_manager ) {
+    $elements_manager->add_category(
+        'eagles-nest',
+        [
+            'title' => __( 'Eagles Nest', 'ena-sinappsus-plugin' ),
+            'icon' => 'fa fa-plug',
+        ]
+    );
+}
+
+function ena_sinappsus_register_widgets( $widgets_manager ) {
+    require_once( ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-form-widget.php' );
+    require_once( ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-funnel-step-widget.php' );
+
+    $widgets_manager->register( new \Ena_Sinappsus_Form_Widget() );
+    $widgets_manager->register( new \Ena_Sinappsus_Funnel_Step_Widget() );
+}
+
