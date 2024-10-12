@@ -56,13 +56,13 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
             'phone' => 'Phone',
             'profile_picture' => 'Profile Picture',
             'dob' => 'Date of Birth',
-            'address.street_line_01' => 'Street Line 01',
-            'address.street_line_02' => 'Street Line 02',
-            'address.street_line_03' => 'Street Line 03',
-            'address.city' => 'City',
-            'address.state' => 'State',
-            'address.zip' => 'Zip',
-            'address.country' => 'Country',
+            'address_street_line_01' => 'Street Line 01',
+            'address_street_line_02' => 'Street Line 02',
+            'address_street_line_03' => 'Street Line 03',
+            'address_city' => 'City',
+            'address_state' => 'State',
+            'address_zip' => 'Zip',
+            'address_country' => 'Country',
         ];
 
         foreach ($fields as $field => $label) {
@@ -97,7 +97,7 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
             return;
         }
 
-        $crm_tunnel_id = $funnel_data['crm_tunnel_id'];
+        $crm_tunnel_id = !empty($funnel_data['crm_tunnel_id']) ? $funnel_data['crm_tunnel_id'] : 1;
         $user_persona_id = $funnel_data['user_persona_id'];
 
         $fields = [
@@ -107,13 +107,13 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
             'phone' => 'Phone',
             'profile_picture' => 'Profile Picture',
             'dob' => 'Date of Birth',
-            'address.street_line_01' => 'Street Line 01',
-            'address.street_line_02' => 'Street Line 02',
-            'address.street_line_03' => 'Street Line 03',
-            'address.city' => 'City',
-            'address.state' => 'State',
-            'address.zip' => 'Zip',
-            'address.country' => 'Country',
+            'address_street_line_01' => 'Street Line 01',
+            'address_street_line_02' => 'Street Line 02',
+            'address_street_line_03' => 'Street Line 03',
+            'address_city' => 'City',
+            'address_state' => 'State',
+            'address_zip' => 'Zip',
+            'address_country' => 'Country',
         ];
 
         echo '<form method="post" action="">';
@@ -135,7 +135,7 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
         if (isset($_POST['ena_sinappsus_submit']) && check_admin_referer('ena_sinappsus_form_nonce', 'ena_sinappsus_nonce')) {
             $data = [
                 'funnel_id' => sanitize_text_field($_POST['funnel_id']),
-                'crm_tunnel_id' => sanitize_text_field($_POST['crm_tunnel_id']),
+                'crm_tunnel_id' => empty($_POST['crm_tunnel_id']) ? 1 : sanitize_text_field($_POST['crm_tunnel_id']),
                 'user_persona_id' => sanitize_text_field($_POST['user_persona_id']),
             ];
 
@@ -145,8 +145,8 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
                 }
             }
 
-            $response = ena_sinappsus_connect_to_api('/funnel', $data, 'POST');
-            if ($response && isset($response['success']) && $response['success']) {
+            $response = ena_sinappsus_connect_to_api('/contacts', $data, 'POST');
+            if ($response && isset($response['id']) && $response['id']) {
                 echo '<p>Form submitted successfully!</p>';
             } else {
                 echo '<p>Failed to submit form.</p>';

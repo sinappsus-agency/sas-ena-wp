@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
     var stepsData = enaSinappsusSteps || {};
 
     $(document).on('change', '[data-setting="sales_funnel"]', function() {
+        console.log('Dropdown changed');
         var selectedFunnel = $(this).val();
         var $stepSelect = $(this).closest('.elementor-control').siblings('.elementor-control-step').find('select');
 

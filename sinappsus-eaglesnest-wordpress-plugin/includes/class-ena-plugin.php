@@ -88,6 +88,7 @@ function ena_sinappsus_connect_to_api($endpoint, $data = array(), $method = 'GET
         'method' => $method,
         'headers' => array(
             'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $account_key,
         ),
         'body' => json_encode($data),
@@ -186,8 +187,8 @@ function ena_sinappsus_form_shortcode($atts) {
             $data[$field] = sanitize_text_field($_POST[$field]);
         }
 
-        $response = ena_sinappsus_connect_to_api('/funnel', $data, 'POST');
-        if ($response && isset($response['success']) && $response['success']) {
+        $response = ena_sinappsus_connect_to_api('/contacts', $data, 'POST');
+        if ($response && isset($response['id']) && $response['id']) {
             echo '<p>Form submitted successfully!</p>';
         } else {
             echo '<p>Failed to submit form.</p>';
