@@ -4,7 +4,7 @@
  * Description: the official ENA wordpress plugin for integration into the ENA HEADLESS API
  * Plugin URI: https://eaglesnestatitlan.com
  * Author URI: https://eaglesnestatitlan.com
- * Version: 0.0.2
+ * Version: 0.0.3
  * Author: Sinappsus
  * Requires at least: 5.0
  * Tested up to: 6.0
@@ -16,7 +16,7 @@
 
 defined('ABSPATH') || exit;
 
-define('ENA_SINAPPSUS_VERSION', '0.0.2');
+define('ENA_SINAPPSUS_VERSION', '0.0.3');
 define('ENA_SINAPPSUS_URL', untrailingslashit(plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__))));
 define('ENA_SINAPPSUS_PATH', untrailingslashit(plugin_dir_path(__FILE__)));
 
@@ -25,7 +25,7 @@ require_once __DIR__ . '/plugin-update/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-	'https://github.com/sinappsus-agency/sas-ena-wp/raw/main/sinappsus-eaglesnest-wordpress-plugin/info.json',  // The URL of the metadata file.
+	'https://github.com/sinappsus-agency/sas-ena-wp/tree/master/sinappsus-eaglesnest-wordpress-plugin/info.json',  // The URL of the metadata file.
 	__FILE__, // Full path to the main plugin file.
 	'ena-sinappsus-plugin'  // Plugin slug. Usually it's the same as the name of the directory.
 );
