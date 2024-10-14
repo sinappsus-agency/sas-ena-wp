@@ -1,13 +1,13 @@
 {
     "name" : "Sinappsus Eaglesnest WordPress Plugin",
     "slug" : "sinappsus-eaglesnest-wordpress-plugin",
-    "version" : "0.0.3",
+    "version" : "0.0.4",
     "author"  : "Sinappsus",
     "author_uri" : "https://sinappsus.agency",
-    "download_url" : "https://github.com/sinappsus-agency/sas-ena-wp/blob/master/sinappsus-eaglesnest-wordpress-plugin.zip",
+    "download_url" : "https://raw.githubusercontent.com/sinappsus-agency/sas-ena-wp/refs/heads/master/sinappsus-eaglesnest-wordpress-plugin/sinappsus-eaglesnest-wordpress-plugin.zip",
     "sections" : {
         "description" : "The ENA Systems integration plugin.",
-        "changelog": "0.0.3 Init"
+        "changelog": "0.0.4 Init"
     },
     "banners":{
         "low" : "https://krispykremesa.sinappsus.co.za/banner-772x250.png",

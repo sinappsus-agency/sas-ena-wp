@@ -16,7 +16,7 @@
 
 defined('ABSPATH') || exit;
 
-define('ENA_SINAPPSUS_VERSION', '0.0.3');
+define('ENA_SINAPPSUS_VERSION', '0.0.4');
 define('ENA_SINAPPSUS_URL', untrailingslashit(plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__))));
 define('ENA_SINAPPSUS_PATH', untrailingslashit(plugin_dir_path(__FILE__)));
 
@@ -25,7 +25,7 @@ require_once __DIR__ . '/plugin-update/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-	'https://github.com/sinappsus-agency/sas-ena-wp/tree/master/sinappsus-eaglesnest-wordpress-plugin/info.json',  // The URL of the metadata file.
+	'https://raw.githubusercontent.com/sinappsus-agency/sas-ena-wp/refs/heads/master/sinappsus-eaglesnest-wordpress-plugin/info.json',  // The URL of the metadata file.
 	__FILE__, // Full path to the main plugin file.
 	'ena-sinappsus-plugin'  // Plugin slug. Usually it's the same as the name of the directory.
 );
