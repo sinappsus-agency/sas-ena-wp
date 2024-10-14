@@ -485,3 +485,7 @@ function ena_sinappsus_register_widgets($widgets_manager) {
     $widgets_manager->register(new \Ena_Sinappsus_Show_Event_Widget());
     $widgets_manager->register(new \Ena_Sinappsus_Show_Room_Widget());
 }
+
+
+// Add custom fields to registration form by requiring the file
+require_once(ENA_SINAPPSUS_PLUGIN_DIR . 'core/register.php');
