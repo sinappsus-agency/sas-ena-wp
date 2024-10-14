@@ -4,7 +4,7 @@
  * Description: the official ENA wordpress plugin for integration into the ENA HEADLESS API
  * Plugin URI: https://eaglesnestatitlan.com
  * Author URI: https://eaglesnestatitlan.com
- * Version: 0.0.3
+ * Version: 0.0.4
  * Author: Sinappsus
  * Requires at least: 5.0
  * Tested up to: 6.0
