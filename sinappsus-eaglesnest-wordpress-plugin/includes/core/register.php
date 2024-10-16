@@ -59,3 +59,41 @@ add_action('user_register', function($user_id) {
         ]);
     }
 });
+
+// Add custom fields to user profile
+add_action('show_user_profile', 'show_custom_user_profile_fields');
+add_action('edit_user_profile', 'show_custom_user_profile_fields');
+
+function show_custom_user_profile_fields($user) {
+    if (get_option('enable_custom_registration')) {
+        ?>
+        <h3><?php _e('Custom Registration Fields'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th><label for="custom_field_1"><?php _e('Custom Field 1'); ?></label></th>
+                <td>
+                    <input type="text" name="custom_field_1" id="custom_field_1" value="<?php echo esc_attr(get_user_meta($user->ID, 'custom_field_1', true)); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th><label for="custom_field_2"><?php _e('Custom Field 2'); ?></label></th>
+                <td>
+                    <input type="text" name="custom_field_2" id="custom_field_2" value="<?php echo esc_attr(get_user_meta($user->ID, 'custom_field_2', true)); ?>" class="regular-text" />
+                </td>
+            </tr>
+        </table>
+        <?php
+    }
+}
+
+// Save custom fields from user profile
+add_action('personal_options_update', 'save_custom_user_profile_fields');
+add_action('edit_user_profile_update', 'save_custom_user_profile_fields');
+
+function save_custom_user_profile_fields($user_id) {
+    if (get_option('enable_custom_registration')) {
+        update_user_meta($user_id, 'custom_field_1', sanitize_text_field($_POST['custom_field_1']));
+        update_user_meta($user_id, 'custom_field_2', sanitize_text_field($_POST['custom_field_2']));
+    }
+}
+?>
