@@ -9,6 +9,26 @@ function ena_sinappsus_add_admin_menu() {
     add_submenu_page('ena-system', 'Funnel Steps', 'Funnel Steps', 'manage_options', 'funnel-steps', 'funnel_steps_page_html');
 }
 
+// Enqueue the JavaScript file
+add_action('admin_enqueue_scripts', 'enqueue_jwt_auth_scripts');
+function enqueue_jwt_auth_scripts($hook) {
+    // Only load the script on the specific admin page
+    if ($hook !== 'toplevel_page_ena-system') {
+        return;
+    }
+
+    // Enqueue jQuery
+    wp_enqueue_script('jquery');
+
+    // Enqueue the custom script
+    wp_enqueue_script('jwt-auth-script', plugin_dir_url(__FILE__) . '../../includes/scripts/authentication.js', array('jquery'), null, true);
+
+    // Localize the script with the AJAX URL
+    wp_localize_script('jwt-auth-script', 'jwtAuth', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+    ));
+}
+
 // Settings page
 function ena_sinappsus_settings_page() {
     ?>
@@ -18,9 +38,15 @@ function ena_sinappsus_settings_page() {
             <?php
             settings_fields('ena_sinappsus_settings_group');
             do_settings_sections('ena_sinappsus_settings');
-            wp_nonce_field('ena_sinappsus_settings_nonce', 'ena_sinappsus_nonce');
-            submit_button();
+            // wp_nonce_field('ena_sinappsus_settings_nonce', 'ena_sinappsus_nonce');
             ?>
+            <p class="submit">
+                <button type="button" id="authenticate-button" class="button button-primary">Authenticate</button>
+                <button type="button" id="validate-button" class="button">Validate</button>
+                <?php submit_button(); ?>
+            </p>
+            <p id="timer"></p>
+            <p id="message"></p>
         </form>
     </div>
     <?php
