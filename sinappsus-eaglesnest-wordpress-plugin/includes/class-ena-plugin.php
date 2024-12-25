@@ -25,6 +25,8 @@ require_once ENA_SINAPPSUS_PLUGIN_DIR . 'settings/class-register-settings.php';
 
 // Include CRM, API connector, and utility functions
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'utils/class-api-connector.php';
+
+
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'crm/class-crm-handler.php';
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'crm/class-funnels-handler.php';
 

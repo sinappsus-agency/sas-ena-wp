@@ -46,17 +46,11 @@ add_action('user_register', function($user_id) {
         update_user_meta($user_id, 'custom_field_1', sanitize_text_field($_POST['custom_field_1']));
         update_user_meta($user_id, 'custom_field_2', sanitize_text_field($_POST['custom_field_2']));
 
-        // Submit to API
-        $response = wp_remote_post(ENA_SINAPPSUS_API_URL . '/contacts', [
-            'body' => json_encode([
-                'user_id' => $user_id,
-                'custom_field_1' => sanitize_text_field($_POST['custom_field_1']),
-                'custom_field_2' => sanitize_text_field($_POST['custom_field_2']),
-            ]),
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        ena_sinappsus_connect_to_api('/contacts', [
+            'user_id' => $user_id,
+            'custom_field_1' => sanitize_text_field($_POST['custom_field_1']),
+            'custom_field_2' => sanitize_text_field($_POST['custom_field_2']),
+        ], 'POST');
     }
 });
 

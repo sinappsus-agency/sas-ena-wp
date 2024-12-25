@@ -3,6 +3,8 @@
 // Add admin menu and submenus
 add_action('admin_menu', 'ena_sinappsus_add_admin_menu');
 function ena_sinappsus_add_admin_menu() {
+    error_log('ena_sinappsus_connect_to_api() has been called');
+    
     add_menu_page('ENA SYSTEM', 'ENA SYSTEM', 'manage_options', 'ena-system', 'ena_sinappsus_settings_page', 'dashicons-admin-generic');
     add_submenu_page('ena-system', 'CRM', 'CRM', 'manage_options', 'ena-crm', 'ena_sinappsus_crm_page');
     add_submenu_page('ena-system', 'Reservations', 'Reservations', 'manage_options', 'ena-reservations', 'ena_sinappsus_reservations_page');
@@ -11,6 +13,7 @@ function ena_sinappsus_add_admin_menu() {
 
 // Enqueue the JavaScript file
 add_action('admin_enqueue_scripts', 'enqueue_jwt_auth_scripts');
+
 function enqueue_jwt_auth_scripts($hook) {
     // Only load the script on the specific admin page
     if ($hook !== 'toplevel_page_ena-system') {

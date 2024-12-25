@@ -7,18 +7,11 @@ function handle_sales_funnel_step($sales_funnel_id = null, $step_id = null) {
         return 'Sales Funnel ID and Step ID are required.';
     }
 
-    // Prepare API URL based on the sales funnel and step IDs
-    $api_url = ENA_SINAPPSUS_API_URL . "/salesfunnels/steps/{$sales_funnel_id}/{$step_id}";
+    $data = ena_sinappsus_connect_to_api("/sales-funnels/steps/{$sales_funnel_id}/{$step_id}");
 
-    // Make the API call
-    $response = wp_remote_get($api_url);
-
-    if (is_wp_error($response)) {
+    if (is_wp_error($data)) {
         return 'API request failed';
     }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
 
     // Check if the API returns HTML content or a page ID
     if (isset($data['html'])) {

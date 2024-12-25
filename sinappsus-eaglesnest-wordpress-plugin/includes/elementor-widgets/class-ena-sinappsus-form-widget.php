@@ -154,25 +154,21 @@ class Ena_Sinappsus_Form_Widget extends \Elementor\Widget_Base {
         }
     }
 
-    private function get_sales_funnels() {
-        $response = wp_remote_get(ENA_SINAPPSUS_API_URL . '/salesfunnels');
-
-        if (is_wp_error($response)) {
+    private function get_sales_funnels()
+    {
+        $data = ena_sinappsus_connect_to_api('/sales-funnels');
+        if (empty($data)) {
             return [];
         }
-
-        $body = wp_remote_retrieve_body($response);
-        return json_decode($body, true);
+        return $data;
     }
 
     private function get_funnel_data($funnel_id) {
-        $response = wp_remote_get(ENA_SINAPPSUS_API_URL . '/salesfunnels/' . $funnel_id);
+        $data = ena_sinappsus_connect_to_api('/sales-funnels/' . $funnel_id);
 
-        if (is_wp_error($response)) {
+        if (is_wp_error($data)) {
             return [];
         }
-
-        $body = wp_remote_retrieve_body($response);
-        return json_decode($body, true);
+        return $data;
     }
 }

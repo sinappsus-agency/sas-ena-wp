@@ -1,25 +1,31 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if (! defined('ABSPATH')) exit; // Exit if accessed directly
 
-class Ena_Sinappsus_Book_Room_Widget extends \Elementor\Widget_Base {
+class Ena_Sinappsus_Book_Room_Widget extends \Elementor\Widget_Base
+{
 
-    public function get_name() {
+    public function get_name()
+    {
         return 'ena_sinappsus_book_room_widget';
     }
 
-    public function get_title() {
-        return __( 'ENA Book Room', 'ena-sinappsus-plugin' );
+    public function get_title()
+    {
+        return __('ENA Book Room', 'ena-sinappsus-plugin');
     }
 
-    public function get_icon() {
+    public function get_icon()
+    {
         return 'fa fa-bed'; // You can change this to any FontAwesome icon
     }
 
-    public function get_categories() {
-        return [ 'eagles-nest' ];
+    public function get_categories()
+    {
+        return ['eagles-nest'];
     }
 
-    protected function register_controls() {
+    protected function register_controls()
+    {
         $sales_funnels = $this->get_sales_funnels();
 
         $funnel_options = [];
@@ -51,22 +57,21 @@ class Ena_Sinappsus_Book_Room_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
-    protected function render() {
+    protected function render()
+    {
         $settings = $this->get_settings_for_display();
         $sales_funnel_id = $settings['sales_funnel'];
 
         echo do_shortcode('[ena_room_booking sales_funnel_id="' . esc_attr($sales_funnel_id) . '"]');
     }
 
-    private function get_sales_funnels() {
-        $response = wp_remote_get(ENA_SINAPPSUS_API_URL . '/salesfunnels');
-
-        if (is_wp_error($response)) {
+    private function get_sales_funnels()
+    {
+        $data = ena_sinappsus_connect_to_api('/sales-funnels');
+        if (empty($data)) {
             return [];
         }
-
-        $body = wp_remote_retrieve_body($response);
-        return json_decode($body, true);
+        return $data;
     }
 
     protected function _content_template() {}

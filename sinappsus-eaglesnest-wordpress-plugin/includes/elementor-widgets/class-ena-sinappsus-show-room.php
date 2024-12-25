@@ -59,14 +59,12 @@ class Ena_Sinappsus_Show_Room_Widget extends \Elementor\Widget_Base {
     }
 
     private function get_sales_funnels() {
-        $response = wp_remote_get(ENA_SINAPPSUS_API_URL . '/salesfunnels');
+        $data = ena_sinappsus_connect_to_api('/sales-funnels');
 
-        if (is_wp_error($response)) {
+        if (is_wp_error($data)) {
             return [];
         }
-
-        $body = wp_remote_retrieve_body($response);
-        return json_decode($body, true);
+        return $data;
     }
 
     protected function _content_template() {}
