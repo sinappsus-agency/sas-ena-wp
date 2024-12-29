@@ -40,6 +40,7 @@ function ena_sinappsus_elementor_register_widgets($widgets_manager) {
     require_once(ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-book-room.php');
     require_once(ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-book-event.php');
     require_once(ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-show-event.php');
+    require_once(ENA_SINAPPSUS_PLUGIN_DIR . 'elementor-widgets/class-ena-sinappsus-available-rooms.php');
 
     $widgets_manager->register(new \Ena_Sinappsus_Form_Widget());
     $widgets_manager->register(new \Ena_Sinappsus_Funnel_Step_Widget());
@@ -47,4 +48,5 @@ function ena_sinappsus_elementor_register_widgets($widgets_manager) {
     $widgets_manager->register(new \Ena_Sinappsus_Book_Event_Widget());
     $widgets_manager->register(new \Ena_Sinappsus_Show_Event_Widget());
     $widgets_manager->register(new \Ena_Sinappsus_Show_Room_Widget());
+    $widgets_manager->register(new \Ena_Sinappsus_Available_Rooms_Widget());
 }
