@@ -34,65 +34,93 @@ class Ena_Sinappsus_Available_Rooms_Widget extends \Elementor\Widget_Base
             ]
         );
 
-        $this->add_control(
-            'start_date',
-            [
-                'label' => __('Start Date', 'ena-sinappsus-plugin'),
-                'type' => \Elementor\Controls_Manager::DATE_TIME,
-                'picker_options' => [
-                    'enableTime' => false,
-                    'dateFormat' => 'Y-m-d',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'end_date',
-            [
-                'label' => __('End Date', 'ena-sinappsus-plugin'),
-                'type' => \Elementor\Controls_Manager::DATE_TIME,
-                'picker_options' => [
-                    'enableTime' => false,
-                    'dateFormat' => 'Y-m-d',
-                ],
-            ]
-        );
-
         $this->end_controls_section();
     }
 
     protected function render()
     {
-        $settings = $this->get_settings_for_display();
-        $start_date = $settings['start_date'];
-        $end_date = $settings['end_date'];
-
-        if ($start_date && $end_date) {
-            $available_rooms = $this->get_available_rooms($start_date, $end_date);
-
-            if (!empty($available_rooms)) {
-                echo '<div class="available-rooms">';
-                foreach ($available_rooms as $room) {
-                    echo '<div class="room-card">';
-                    echo '<h3>' . esc_html($room['room']['name']) . '</h3>';
-                    if (!empty($room['bookings'])) {
-                        echo '<ul>';
-                        foreach ($room['bookings'] as $booking) {
-                            echo '<li>' . esc_html($booking['start_date']) . ' to ' . esc_html($booking['end_date']) . '</li>';
+        ?>
+        <div class="available-rooms-widget">
+            <form id="available-rooms-form">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" required>
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" required>
+                <button type="submit">Check Availability</button>
+            </form>
+            <div id="available-rooms-results"></div>
+        </div>
+        <script>
+            document.getElementById('available-rooms-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                fetch(`<?php echo esc_url(admin_url('admin-ajax.php')); ?>?action=get_available_rooms&start_date=${startDate}&end_date=${endDate}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const resultsDiv = document.getElementById('available-rooms-results');
+                        resultsDiv.innerHTML = '';
+                        if (data.success && data.data.length > 0) {
+                            data.data.forEach(room => {
+                                const roomCard = document.createElement('div');
+                                roomCard.classList.add('room-card');
+                                roomCard.innerHTML = `<h3>${room.room.name}</h3>`;
+                                if (room.bookings && room.bookings.length > 0) {
+                                    const bookingsList = document.createElement('ul');
+                                    room.bookings.forEach(booking => {
+                                        const bookingItem = document.createElement('li');
+                                        bookingItem.textContent = `${booking.start_date} to ${booking.end_date}`;
+                                        bookingsList.appendChild(bookingItem);
+                                    });
+                                    roomCard.appendChild(bookingsList);
+                                } else {
+                                    roomCard.innerHTML += '<p>No bookings during this period.</p>';
+                                }
+                                resultsDiv.appendChild(roomCard);
+                            });
+                        } else {
+                            resultsDiv.innerHTML = '<p>No available rooms found for the selected dates.</p>';
                         }
-                        echo '</ul>';
-                    } else {
-                        echo '<p>No bookings during this period.</p>';
-                    }
-                    echo '</div>';
-                }
-                echo '</div>';
-            } else {
-                echo '<p>No available rooms found for the selected dates.</p>';
-            }
-        } else {
-            echo '<p>Please select a start and end date.</p>';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching available rooms:', error);
+                    });
+            });
+        </script>
+        <style>
+        .available-rooms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
+
+        .room-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            width: calc(33.333% - 20px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .room-card h3 {
+            margin-top: 0;
+        }
+
+        .room-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .room-card ul li {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            padding: 8px;
+        }
+        </style>
+        <?php
     }
 
     private function get_available_rooms($start_date, $end_date)

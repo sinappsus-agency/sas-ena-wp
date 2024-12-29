@@ -41,6 +41,8 @@ require_once ENA_SINAPPSUS_PLUGIN_DIR . 'shortcode/class-events-shortcode.php';
 // Enqueue FontAwesome
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'assets/class-assets-handler.php';
 
+// Include AJAX Handlers
+require_once ENA_SINAPPSUS_PLUGIN_DIR . 'includes/ajax-handlers/ajax-handlers.php';
 
 // Include Elementor Plugin
 require_once ENA_SINAPPSUS_PLUGIN_DIR . 'elementor/class-elementor-config.php';
