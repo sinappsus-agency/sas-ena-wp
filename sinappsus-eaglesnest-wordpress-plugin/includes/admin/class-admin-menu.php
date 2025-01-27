@@ -61,7 +61,7 @@ function ena_sinappsus_crm_page() {
     <div class="wrap">
         <h1>CRM</h1>
         <p>Here you can manage your CRM contacts and leads.</p>
-        <!-- Add your CRM management code here -->
+        <?php display_users_table(); ?>
     </div>
     <?php
 }
@@ -123,3 +123,58 @@ function funnel_steps_page_html() {
     </div>
     <?php
 }
+
+// Function to display users in an editable table form
+function display_users_table() {
+    $users = ena_sinappsus_get_contacts();
+    ?>
+    <table class="wp-list-table widefat fixed striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($users as $user) : ?>
+                <tr>
+                    <td><?php echo esc_html($user['id']); ?></td>
+                    <td><?php echo esc_html($user['name']); ?></td>
+                    <td><?php echo esc_html($user['email']); ?></td>
+                    <td>
+                        <button class="edit-user" data-id="<?php echo esc_attr($user['id']); ?>">Edit</button>
+                        <button class="delete-user" data-id="<?php echo esc_attr($user['id']); ?>">Delete</button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php
+}
+
+// Function to handle adding, editing, and deleting users
+function handle_user_crud_operations() {
+    if (isset($_POST['action'])) {
+        $action = sanitize_text_field($_POST['action']);
+        $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        $user_data = array(
+            'name' => sanitize_text_field($_POST['name']),
+            'email' => sanitize_email($_POST['email']),
+        );
+
+        switch ($action) {
+            case 'add':
+                ena_sinappsus_add_lead($user_data);
+                break;
+            case 'edit':
+                ena_sinappsus_update_user($user_id, $user_data);
+                break;
+            case 'delete':
+                ena_sinappsus_delete_user($user_id);
+                break;
+        }
+    }
+}
+add_action('admin_post_handle_user_crud_operations', 'handle_user_crud_operations');
